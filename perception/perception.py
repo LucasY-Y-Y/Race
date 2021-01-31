@@ -12,7 +12,10 @@
 
 import carla
 import rospy
-
+from perception_msg.msg import LaneInfo
+from perception_msg.msg import LaneList
+from perception_msg.msg import ObstacleInfo
+from perception_msg.msg import ObstacleList
 class PerceptionModule:
     def __init__(self, carla_world, radius=10):
         self.sensing_radius = radius # default ?????
@@ -79,11 +82,11 @@ class PerceptionModule:
         # return list of waypoints from cur_waypoint to the end of the lane
         return cur_waypoint.next_until_lane_end(distance)
 
-from perception_msg.msg import PerceptionData
 # TODO: rostopic publish
 def publisher(percep_mod):
     rospy.init_node('perception', anonymous=True)
-    pub = rospy.Publisher('obstacles',PerceptionData)
+    obs_pub = rospy.Publisher('obstacles', ObstacleList)
+    lane_pub = rospy.Publisher('lane_waypoints', LaneList)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         obs = percep_mod.get_all_obstacles_within_range()
